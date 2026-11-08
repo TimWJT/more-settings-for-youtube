@@ -41,10 +41,11 @@ const TABS = [
     id: 'player', label: 'Player',
     cards: [
       {
-        title: 'Theater',
+        title: 'Video',
         switches: [
           ['bigTheater', 'Bigger theater', 'Video fills the window, nothing cut off'],
           ['resetTheater', 'Reset each video', 'New videos start in normal view'],
+          ['hideWatermark', 'Hide channel logo', 'The Subscribe logo in the video\'s corner'],
         ],
       },
       {

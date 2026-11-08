@@ -25,6 +25,7 @@ Use your normal profile (signed in to YouTube). Keep DevTools console open for e
 
 ## Player
 - [ ] Theater fills the window, no cropping; Reset each video: next video starts normal, no flash.
+- [ ] Channel logo (Subscribe watermark) in the video's bottom-right corner is gone; comes back when switched off.
 - [ ] Fullscreen side buttons hidden.
 - [ ] Fullscreen: wheel/touchpad does nothing, no scrollbar, no more-videos grid. ⚙ quality menu still scrolls. Exit fullscreen: page scrolls normally.
 

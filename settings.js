@@ -22,6 +22,7 @@ const YTT_DEFAULTS = {
   bigTheater: true,
   resetTheater: true,
   hideFullscreenActions: true,
+  hideWatermark: true,
   fsNoScroll: true,
   fsHideMoreVideos: true,
   // Clean up: top bar

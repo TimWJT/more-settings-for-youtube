@@ -19,6 +19,7 @@ A Firefox extension that adds the settings YouTube doesn't give you. Install it 
 | **Shift+/** closes the shortcut list if it's already open | on |
 | Mouse parked at the far right edge (or just past it): Space, arrows and other keys still work but only the small speed, volume and captions labels show (no control bar, title, paused title, play/pause icon or seek arrows, and captions stay put) | on |
 | Mouse at the edge: small ❚❚ badge in the player's bottom-left corner while paused | off |
+| Hide the channel logo in the video's bottom-right corner (the one that shows Subscribe) | on |
 | Fullscreen: no scrolling and no scrollbar | on |
 | Fullscreen: remove the "more videos" grid you get by scrolling down | on |
 | **Bigger theater mode**: video fills the browser window under YouTube's header, aspect kept, Firefox toolbar visible | on |

@@ -9,7 +9,7 @@
     maxSpeed: 2.5, speedStep: 0.25, speedOverlay: true, rememberSpeed: true, lastSpeed: 1, doublePressPast2: false, quietKeys: true,
     blockNumberSeek: true, fixShortcutDialog: true, edgeHideControls: true, edgePauseIcon: false, fsNoScroll: true, fsHideMoreVideos: true,
     transcriptButton: true, includeTimestamps: true, includeHeader: true,
-    bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideShortsFeed: false, hideShortsSearch: false,
+    bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideWatermark: true, hideShortsFeed: false, hideShortsSearch: false,
     hideCreate: true, hideNotifications: true, hideVoiceSearch: true, noBlur: true, noAnimations: true, noAmbient: true,
     hideGuideShorts: true, hideGuideYourChannel: true, hideGuideYourVideos: true, hideGuideDownloads: true, hideGuideMore: true,
   };
@@ -156,6 +156,9 @@ html.ytt-fs-nomore .html5-video-player :is(.ytp-fullscreen-grid,.ytp-fullscreen-
 /* Fullscreen: hide the like / dislike / comment / share / more column on the right. */
 html.ytt-hide-fs-actions .ytp-fullscreen-quick-actions{display:none !important}
 
+/* Channel watermark: the logo in the video's bottom-right corner that turns into a Subscribe button. */
+html.ytt-hide-watermark .html5-video-player .iv-branding{display:none !important}
+
 /* Header buttons */
 html.ytt-hide-create ytd-masthead #buttons > ytd-button-renderer:has(button[aria-label="Create"]),
 html.ytt-hide-create ytd-masthead button[aria-label="Create"]{display:none !important}
@@ -277,6 +280,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     toggleStyle('ytt-no-ambient', S.noAmbient, noAmbientCss);
     root.classList.toggle('ytt-big-theater', !!S.bigTheater);
     root.classList.toggle('ytt-hide-fs-actions', !!S.hideFullscreenActions);
+    root.classList.toggle('ytt-hide-watermark', !!S.hideWatermark);
     root.classList.toggle('ytt-hide-create', !!S.hideCreate);
     root.classList.toggle('ytt-hide-notif', !!S.hideNotifications);
     root.classList.toggle('ytt-hide-voice', !!S.hideVoiceSearch);
