@@ -19,6 +19,7 @@ Use your normal profile (signed in to YouTube). Keep DevTools console open for e
 ## Keys (on /watch)
 - [ ] C toggles captions with no control bar pop-up; "Captions on/off" shows. Video without captions shows "No captions".
 - [ ] M mutes/unmutes quietly. Click the video, then ↑/↓ change volume by 5 quietly; ↑/↓ without video focus still scroll.
+- [ ] Mute or change volume with M / ↑ ↓, then open a video in a new tab: it keeps that mute and volume.
 - [ ] Typing C/M/digits in search or a comment box types normally.
 - [ ] 0–9 don't seek. Shift+/ opens and closes the shortcut list.
 - [ ] Mouse at the far right edge (left edge does nothing), in fullscreen and normal view: Space, ←/→, C, M work with no bar, title, middle icon or seek arrows, and captions don't move. Small labels still show for speed, volume and captions. Pausing shows nothing (no title, no icon). Pause badge switch on: small ❚❚ bottom-left while paused, gone when playing. Move the mouse back over the video and the controls come back. Switch off: old behaviour.
@@ -30,7 +31,7 @@ Use your normal profile (signed in to YouTube). Keep DevTools console open for e
 - [ ] Fullscreen: wheel/touchpad does nothing, no scrollbar, no more-videos grid. ⚙ quality menu still scrolls. Exit fullscreen: page scrolls normally.
 
 ## Clean up / Speed-ups
-- [ ] Create, bell, mic hidden; sidebar items hidden (full and mini sidebar).
+- [ ] Create, bell, mic hidden; sidebar items hidden (full and mini sidebar), including Playables, Memberships, Report history and the About/Terms/© links at the bottom.
 - [ ] Shorts hidden in feeds / search only when those switches are on.
 - [ ] No blur: top bar and menus solid, readable in dark mode.
 - [ ] No animations (after reload): theater and page changes instant, nothing stuck half-open.

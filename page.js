@@ -12,6 +12,7 @@
     bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideWatermark: true, hideShortsFeed: false, hideShortsSearch: false,
     hideCreate: true, hideNotifications: true, hideVoiceSearch: true, noBlur: true, noAnimations: true, noAmbient: true,
     hideGuideShorts: true, hideGuideYourChannel: true, hideGuideYourVideos: true, hideGuideDownloads: true, hideGuideMore: true,
+    hideGuideReportHistory: true, hideGuidePlayables: true, hideGuideMemberships: true, hideGuideFooter: true,
   };
 
   // Last-known settings, saved by this script, so everything applies before YouTube draws.
@@ -173,7 +174,11 @@ html.ytt-g-channel ytd-guide-entry-renderer:has(> a#endpoint[title="Your channel
 html.ytt-g-videos ytd-guide-entry-renderer:has(> a#endpoint:is([title="Your videos"],[href^="https://studio.youtube.com/channel/"])),
 html.ytt-g-downloads ytd-guide-entry-renderer:has(> a#endpoint:is([title="Downloads"],[href="/feed/downloads"])),
 html.ytt-g-downloads ytd-mini-guide-entry-renderer[aria-label="Downloads"],
-html.ytt-g-more #sections > ytd-guide-section-renderer:has(> #items a[href*="music.youtube.com"], > #items a[href*="youtubekids.com"]){display:none !important}
+html.ytt-g-more #sections > ytd-guide-section-renderer:has(> #items a[href*="music.youtube.com"], > #items a[href*="youtubekids.com"]),
+html.ytt-g-report ytd-guide-entry-renderer:has(> a#endpoint:is([title="Report history"],[href^="/reporthistory"])),
+html.ytt-g-playables ytd-guide-entry-renderer:has(> a#endpoint:is([title="Playables"],[href^="/playables"])),
+html.ytt-g-members ytd-guide-entry-renderer:has(> a#endpoint:is([title="Memberships"],[href^="/paid_memberships"])),
+html.ytt-g-footer ytd-guide-renderer #footer{display:none !important}
 
 /* Big theater: player fills the browser window under YouTube's header, video kept whole (letterboxed). */
 html.ytt-big-theater ytd-watch-flexy[theater] #full-bleed-container,
@@ -289,6 +294,10 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     root.classList.toggle('ytt-g-videos', !!S.hideGuideYourVideos);
     root.classList.toggle('ytt-g-downloads', !!S.hideGuideDownloads);
     root.classList.toggle('ytt-g-more', !!S.hideGuideMore);
+    root.classList.toggle('ytt-g-report', !!S.hideGuideReportHistory);
+    root.classList.toggle('ytt-g-playables', !!S.hideGuidePlayables);
+    root.classList.toggle('ytt-g-members', !!S.hideGuideMemberships);
+    root.classList.toggle('ytt-g-footer', !!S.hideGuideFooter);
     if (!S.edgeHideControls) setEdge(false);
     root.classList.toggle('ytt-fs-noscroll', !!S.fsNoScroll);
     root.classList.toggle('ytt-fs-nomore', !!S.fsHideMoreVideos);
@@ -433,17 +442,30 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     else return;
     if (wasOn !== null) osd(wasOn ? 'Captions off' : 'Captions on');
   }
+  // The player API changes the volume without saving it, so the next video would load with the old
+  // setting (e.g. still muted). Save it the way YouTube does (localStorage for new tabs, sessionStorage for this one).
+  function saveVolume(volume, muted) {
+    try {
+      const now = Date.now();
+      const data = JSON.stringify({ volume: Math.round(volume), muted: !!muted });
+      localStorage.setItem('yt-player-volume', JSON.stringify({ data, expiration: now + 30 * 864e5, creation: now }));
+      sessionStorage.setItem('yt-player-volume', JSON.stringify({ data, creation: now }));
+    } catch { /* ignore */ }
+  }
   function changeVolume(player, delta) {
     if (!player.getVolume) return;
     const vol = Math.max(0, Math.min(100, Math.round(player.getVolume()) + delta));
     player.setVolume(vol);
-    if (vol > 0 && player.isMuted?.()) player.unMute();
+    let muted = !!player.isMuted?.();
+    if (vol > 0 && muted) { player.unMute(); muted = false; }
+    saveVolume(vol, muted);
     osd(`Volume ${vol}%`);
   }
   function toggleMute(player) {
     if (!player.isMuted) return;
-    if (player.isMuted()) { player.unMute(); osd(`Volume ${Math.round(player.getVolume())}%`); }
-    else { player.mute(); osd('Muted'); }
+    const vol = player.getVolume();
+    if (player.isMuted()) { player.unMute(); saveVolume(vol, false); osd(`Volume ${Math.round(vol)}%`); }
+    else { player.mute(); saveVolume(vol, true); osd('Muted'); }
   }
   function quietKey(e) {
     if (!S.quietKeys || e.shiftKey || location.pathname !== '/watch') return false;

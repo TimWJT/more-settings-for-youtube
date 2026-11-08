@@ -77,6 +77,10 @@ const TABS = [
           ['hideGuideYourVideos', 'Your videos', ''],
           ['hideGuideDownloads', 'Downloads', ''],
           ['hideGuideMore', 'More from YouTube', 'The whole section'],
+          ['hideGuidePlayables', 'Playables', 'In Explore'],
+          ['hideGuideMemberships', 'Memberships', 'In Explore'],
+          ['hideGuideReportHistory', 'Report history', ''],
+          ['hideGuideFooter', 'Links at the bottom', 'About, Press, Terms, © Google'],
         ],
       },
       {

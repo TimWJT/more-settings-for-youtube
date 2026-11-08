@@ -31,7 +31,7 @@ A Firefox extension that adds the settings YouTube doesn't give you. Install it 
 | Hide Shorts in feeds (home, subscriptions, channels, up next) | off |
 | Hide Shorts in search | off |
 | Hide the Create button and notifications bell | on |
-| Sidebar: hide Shorts tab, Your channel, Your videos, Downloads, More from YouTube (each its own switch) | on |
+| Sidebar: hide Shorts tab, Your channel, Your videos, Downloads, More from YouTube, Playables, Memberships, Report history, the About/Terms links at the bottom (each its own switch) | on |
 | Turn off voice search (mic button and the feature) | on |
 
 Transcript is fetched three ways, falling back in order: YouTube's internal transcript API → the player's caption file → YouTube's own transcript panel, opened off-screen so you never see it. The browser console (F12) logs which one worked: `[More Settings for YouTube] transcript via ...`.

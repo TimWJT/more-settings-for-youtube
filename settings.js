@@ -35,6 +35,10 @@ const YTT_DEFAULTS = {
   hideGuideYourVideos: true,
   hideGuideDownloads: true,
   hideGuideMore: true,
+  hideGuideReportHistory: true,
+  hideGuidePlayables: true,
+  hideGuideMemberships: true,
+  hideGuideFooter: true,
   // Clean up: feeds
   hideShortsFeed: false,
   hideShortsSearch: false,
