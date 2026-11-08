@@ -31,6 +31,8 @@ const TABS = [
           ['quietKeys', 'Quiet C and volume', 'C, ↑ ↓ and M don\'t pop up the progress bar'],
           ['blockNumberSeek', 'Block 0–9', 'Number keys don\'t jump through the video'],
           ['fixShortcutDialog', 'Shift+/ toggles', 'Press again to close the shortcut list'],
+          ['edgeHideControls', 'Mouse at the edge hides controls', 'Mouse at the far right: only small labels show'],
+          ['edgePauseIcon', 'Pause badge at the edge', 'Small ❚❚ in the corner while paused'],
         ],
       },
     ],
@@ -47,7 +49,11 @@ const TABS = [
       },
       {
         title: 'Fullscreen',
-        switches: [['hideFullscreenActions', 'Hide side buttons', 'Like, dislike, comment, share, more']],
+        switches: [
+          ['hideFullscreenActions', 'Hide side buttons', 'Like, dislike, comment, share, more'],
+          ['fsNoScroll', 'No scrolling', 'No scrollbar, and the page below stays put'],
+          ['fsHideMoreVideos', 'No more videos', 'Removes the video grid you get by scrolling down'],
+        ],
       },
     ],
   },

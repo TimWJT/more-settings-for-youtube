@@ -21,10 +21,12 @@ Use your normal profile (signed in to YouTube). Keep DevTools console open for e
 - [ ] M mutes/unmutes quietly. Click the video, then ↑/↓ change volume by 5 quietly; ↑/↓ without video focus still scroll.
 - [ ] Typing C/M/digits in search or a comment box types normally.
 - [ ] 0–9 don't seek. Shift+/ opens and closes the shortcut list.
+- [ ] Mouse at the far right edge (left edge does nothing), in fullscreen and normal view: Space, ←/→, C, M work with no bar, title, middle icon or seek arrows, and captions don't move. Small labels still show for speed, volume and captions. Pausing shows nothing (no title, no icon). Pause badge switch on: small ❚❚ bottom-left while paused, gone when playing. Move the mouse back over the video and the controls come back. Switch off: old behaviour.
 
 ## Player
 - [ ] Theater fills the window, no cropping; Reset each video: next video starts normal, no flash.
 - [ ] Fullscreen side buttons hidden.
+- [ ] Fullscreen: wheel/touchpad does nothing, no scrollbar, no more-videos grid. ⚙ quality menu still scrolls. Exit fullscreen: page scrolls normally.
 
 ## Clean up / Speed-ups
 - [ ] Create, bell, mic hidden; sidebar items hidden (full and mini sidebar).

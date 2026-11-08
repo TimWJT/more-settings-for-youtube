@@ -7,7 +7,7 @@
 
   const S = {
     maxSpeed: 2.5, speedStep: 0.25, speedOverlay: true, rememberSpeed: true, lastSpeed: 1, doublePressPast2: false, quietKeys: true,
-    blockNumberSeek: true, fixShortcutDialog: true,
+    blockNumberSeek: true, fixShortcutDialog: true, edgeHideControls: true, edgePauseIcon: false, fsNoScroll: true, fsHideMoreVideos: true,
     transcriptButton: true, includeTimestamps: true, includeHeader: true,
     bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideShortsFeed: false, hideShortsSearch: false,
     hideCreate: true, hideNotifications: true, hideVoiceSearch: true, noBlur: true, noAnimations: true, noAmbient: true,
@@ -133,6 +133,26 @@ html[dark] #ytt-bar{--ytt-bg:rgba(255,255,255,.1);--ytt-bg-hover:rgba(255,255,25
 .ytt-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 @media (prefers-reduced-motion:reduce){.ytt-toast,.ytt-osd{transition:none}}
 
+/* Mouse parked at the far right edge: nothing pops up over the video when you press a key.
+   Control bar and title, the play/pause icon in the middle and the seek arrows (YouTube's seek UI forces
+   the control bar on). The keys still work. The small labels for speed, volume and captions still show
+   (YouTube's volume % and this add-on's label), since those are what you want to see. */
+html.ytt-edge .html5-video-player :is(.ytp-chrome-bottom,.ytp-chrome-top,.ytp-gradient-bottom,.ytp-gradient-top,
+  .ytp-bezel,.ytp-unified-seek-wrapper,.ytp-doubletap-ui-legacy,.ytp-fullscreen-metadata,.ytp-title-expanded-overlay){
+  opacity:0 !important;transition:none !important;animation:none !important}
+.ytt-pause-badge{display:none;position:absolute;left:12px;bottom:12px;z-index:70;padding:4px 7px;border-radius:6px;
+  background:rgba(0,0,0,.55);color:#fff;font:700 11px/1 Roboto,Arial,sans-serif;letter-spacing:-1px;pointer-events:none}
+html.ytt-edge .ytt-pause-badge.on{display:block}
+/* ...and captions stay where they sit when the bar is hidden, instead of jumping up for the invisible bar. */
+html.ytt-edge .html5-video-player .caption-window.ytp-caption-window-bottom{margin-bottom:0 !important;transition:none !important}
+html.ytt-edge .html5-video-player .caption-window.ytp-caption-window-top{margin-top:0 !important;transition:none !important}
+
+/* Fullscreen: no page scrolling or scrollbar, and no "more videos" grid. */
+html.ytt-fs.ytt-fs-noscroll,html.ytt-fs.ytt-fs-noscroll body,html.ytt-fs.ytt-fs-noscroll ytd-app{
+  overflow:hidden !important;scrollbar-width:none !important}
+html.ytt-fs-nomore .html5-video-player :is(.ytp-fullscreen-grid,.ytp-fullscreen-grid-expand-button,.ytp-fullscreen-grid-hover-overlay){
+  display:none !important}
+
 /* Fullscreen: hide the like / dislike / comment / share / more column on the right. */
 html.ytt-hide-fs-actions .ytp-fullscreen-quick-actions{display:none !important}
 
@@ -248,6 +268,8 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
   let lastBigTheater = null;
   // Declared here, before the settings listener, because emit('ready') below can fire it straight away.
   let saveTimer;
+  let atEdge = false; // mouse parked at the far right (see "mouse at the edge")
+  let wheelBlocked = false; // fullscreen scroll lock is on (see "fullscreen")
   function applySettings() {
     const root = document.documentElement;
     toggleStyle('ytt-shorts-feed', S.hideShortsFeed, shortsFeedCss);
@@ -265,6 +287,10 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     root.classList.toggle('ytt-g-videos', !!S.hideGuideYourVideos);
     root.classList.toggle('ytt-g-downloads', !!S.hideGuideDownloads);
     root.classList.toggle('ytt-g-more', !!S.hideGuideMore);
+    if (!S.edgeHideControls) setEdge(false);
+    root.classList.toggle('ytt-fs-noscroll', !!S.fsNoScroll);
+    root.classList.toggle('ytt-fs-nomore', !!S.fsHideMoreVideos);
+    updateFullscreen();
     if (lastBigTheater !== null && lastBigTheater !== S.bigTheater) nudgePlayerSize();
     lastBigTheater = !!S.bigTheater;
     clearWideCookie();
@@ -456,6 +482,66 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
       if (closeHotkeyDialog()) stop(e);
     }
   }, true);
+
+  // ---------- mouse at the edge ----------
+  // With the mouse at the far right of the window (or just left the window that way), the control
+  // bar stays hidden even when Space, arrows or other keys would show it. Each mouse move is one number
+  // comparison, and the page only changes when the mouse crosses the edge.
+  // The right side is measured from the window edge with extra room: YouTube's page scrollbar sits there
+  // (even in fullscreen), and Firefox stops reporting the mouse once it's over the scrollbar.
+  const RIGHT_ROOM = 20;
+  let winWidth = window.innerWidth;
+  const readWidth = () => { winWidth = window.innerWidth; };
+  window.addEventListener('resize', readWidth, { passive: true });
+  document.addEventListener('fullscreenchange', () => { readWidth(); updateFullscreen(); });
+
+  // Optional pause badge (setting): YouTube's big pause icon is hidden at the edge, so a small "❚❚" sits in
+  // the player's bottom-left corner while paused. CSS only shows it while the mouse is at the edge.
+  document.addEventListener('pause', (e) => {
+    const v = e.target;
+    if (!S.edgePauseIcon || v !== getVideo() || v.ended) return;
+    const host = v.closest('.html5-video-player');
+    if (!host) return;
+    let b = host.querySelector(':scope > .ytt-pause-badge');
+    if (!b) { b = el('div', { class: 'ytt-pause-badge', 'aria-hidden': 'true' }, '❚❚'); host.appendChild(b); }
+    b.classList.add('on');
+  }, true);
+  document.addEventListener('play', (e) => {
+    e.target?.closest?.('.html5-video-player')?.querySelector(':scope > .ytt-pause-badge.on')?.classList.remove('on');
+  }, true);
+
+  // ---------- fullscreen ----------
+  // Scrolling in fullscreen pulls up YouTube's "more videos" grid and the page below. While in fullscreen
+  // (and only then) the wheel is swallowed, except inside the player's own menus (quality list etc.).
+  // The listener is only attached in fullscreen, so normal scrolling never runs any of this code.
+  function onFullscreenWheel(e) {
+    if (e.target?.closest?.('.ytp-popup, .ytp-settings-menu, .ytp-panel')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+  function updateFullscreen() {
+    const fs = !!document.fullscreenElement;
+    document.documentElement.classList.toggle('ytt-fs', fs);
+    const want = fs && !!(S.fsNoScroll || S.fsHideMoreVideos);
+    if (want === wheelBlocked) return;
+    wheelBlocked = want;
+    if (want) window.addEventListener('wheel', onFullscreenWheel, { capture: true, passive: false });
+    else window.removeEventListener('wheel', onFullscreenWheel, { capture: true });
+  }
+  function setEdge(on) {
+    if (on === atEdge) return;
+    atEdge = on;
+    document.documentElement.classList.toggle('ytt-edge', on);
+  }
+  // Right side only.
+  const nearSide = (x, extra) => x >= winWidth - RIGHT_ROOM - extra;
+  window.addEventListener('mousemove', (e) => {
+    if (S.edgeHideControls) setEdge(nearSide(e.clientX, 0));
+  }, { capture: true, passive: true });
+  // Mouse left the page (out of the window, or onto the scrollbar) through the right side.
+  document.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget && S.edgeHideControls && nearSide(e.clientX, 10)) setEdge(true);
+  }, { passive: true });
 
   // ---------- theater ----------
   let lastTheater = null;

@@ -6,51 +6,21 @@ Copy these into the fields on addons.mozilla.org when you submit.
 More Settings for YouTube
 
 ## Summary (max 250 characters)
-One-click transcript copy, speed past 2× with Shift+. and Shift+, , no more 0–9 jumping, quieter keys, a bigger theater mode, a tidier YouTube and switches that make it lighter to run.
+One-click transcript copy, speed past 2×, keyboard fixes, a bigger theater mode, less clutter and a lighter YouTube. Turn on only what you want.
 
 ## Description
-The settings YouTube doesn't give you, in one popup. Copy a whole transcript in one click, go past 2× speed, stop number keys jumping through the video, and make YouTube tidier and lighter to run. Every change has its own switch.
+(AMO joins plain lines into one paragraph, so the list uses Markdown "- " bullets with blank lines around it.)
 
-**Transcript**
-• A Transcript button sits next to Subscribe. One click copies the whole transcript, and a small message tells you how many words it copied.
-• Shift-click copies it the other way, with or without timestamps.
-• Alt+Shift+T copies it from the keyboard. You can change the shortcut in about:addons > ⚙ > Manage Extension Shortcuts.
-• You can also copy it from the toolbar popup.
-• Choose whether to include timestamps, and whether to add the title, channel and link at the top.
-• The transcript panel never pops open. It tries YouTube's transcript first and falls back to the video's captions, so it works on most videos that have them.
+The YouTube settings you wish it had. Turn on only what you want.
 
-**Speed**
-• Shift+. and Shift+, go past YouTube's 2× limit, up to a max you choose (2.5× by default, up to 16×).
-• Pick how far each press moves the speed, from 0.05× to 0.5×.
-• If you want, each step past 2× can need a quick double press of Shift+. so you don't go too fast by accident. This is off by default.
-• A small label on the video shows the new speed. You can turn it off.
-• Your speed carries over to the next video.
+- **Copy any transcript** in one click
+- **Speed past 2×**, beyond YouTube's limit
+- **Keyboard fixes**, like number keys no longer skipping around
+- **Bigger theater mode** that fills the window
+- **Hide clutter** like Shorts and buttons you never use
+- **Lighter YouTube** with fewer effects to draw
 
-**Keys**
-• C (captions), ↑ ↓ (volume) and M (mute) work without popping up the control bar. A small label shows what changed.
-• Number keys 0–9 no longer jump through the video.
-• Shift+/ closes the shortcut list as well as opening it.
-
-**Player**
-• Bigger theater mode. The video fills the window under YouTube's top bar, with nothing cut off.
-• New videos start in normal view instead of theater.
-• Hide the like, dislike, comment, share and more buttons in fullscreen.
-
-**Clean up**
-• Hide the Create button, the notifications bell and voice search (the mic button and the feature).
-• Hide sidebar items one by one. Shorts, Your channel, Your videos, Downloads and More from YouTube each have a switch.
-• Hide Shorts in feeds (home, subscriptions, channels, up next) and in search, with a switch for each. Both are off by default.
-
-**Speed-ups**
-• No see-through blur. The top bar, menus and player buttons get solid backgrounds, which are cheaper to draw.
-• No animations. Theater mode, page changes and fades happen straight away.
-• No ambient glow behind the video.
-
-Thumbnail hover previews keep working.
-
-It's built to stay out of the way. Apart from one keyboard listener and a small check once a second, nothing runs while you scroll or watch. Transcripts are only fetched when you ask for one.
-
-Nothing about you is collected or sent anywhere. Not affiliated with or endorsed by YouTube or Google.
+No data collected. Not affiliated with YouTube or Google.
 
 ## Categories
 Appearance, Photos, Music & Videos

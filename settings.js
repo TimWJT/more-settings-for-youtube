@@ -16,10 +16,14 @@ const YTT_DEFAULTS = {
   quietKeys: true,
   blockNumberSeek: true,
   fixShortcutDialog: true,
+  edgeHideControls: true,
+  edgePauseIcon: false,
   // Player
   bigTheater: true,
   resetTheater: true,
   hideFullscreenActions: true,
+  fsNoScroll: true,
+  fsHideMoreVideos: true,
   // Clean up: top bar
   hideCreate: true,
   hideNotifications: true,
