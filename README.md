@@ -25,7 +25,7 @@ A Firefox extension that adds the settings YouTube doesn't give you. Install it 
 | New videos start in normal view (theater resets) | on |
 | Hide the like / dislike / comment / share / more buttons in fullscreen | on |
 | No see-through blur: solid top bar, home page chip bar, menus and player buttons instead of frosted glass (cheaper to draw) | on |
-| No animations: theater mode, page changes and fades happen instantly | on |
+| No animations: theater mode and page changes happen instantly | on |
 | No ambient glow behind the video | on |
 | Hide Shorts in feeds (home, subscriptions, channels, up next) | off |
 | Hide Shorts in search | off |

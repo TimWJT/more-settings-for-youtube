@@ -242,10 +242,9 @@ html[dark] ytd-masthead #background,html[dark] #frosted-glass.ytd-app{background
 ytd-menu-popup-renderer,ytd-multi-page-menu-renderer{background:#fff !important}
 html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{background:#282828 !important}`;
 
-  // No animations: page-change and theater slides (view transitions are switched off at startup)
-  // plus short fades and slides. 1ms rather than 0 so YouTube's "transition finished" events still fire.
-  // Looping animations like loading spinners are left alone.
-  const noAnimCss = `*,*::before,*::after{transition-duration:1ms !important;transition-delay:0s !important}`;
+  // No animations is handled at startup (view transitions switched off, see top). No page-wide
+  // `* { transition-duration }` rule: it turns every style change on every element into a
+  // transition, which made style work about 3x slower in testing.
 
   // Ambient mode: the coloured glow drawn from the video behind the player.
   const noAmbientCss = `#cinematics,#cinematics-full-bleed-container,#cinematic-container{display:none !important}`;
@@ -275,7 +274,6 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     toggleStyle('ytt-shorts-feed', S.hideShortsFeed, shortsFeedCss);
     toggleStyle('ytt-shorts-search', S.hideShortsSearch, shortsSearchCss);
     toggleStyle('ytt-no-blur', S.noBlur, noBlurCss);
-    toggleStyle('ytt-no-anim', S.noAnimations, noAnimCss);
     toggleStyle('ytt-no-ambient', S.noAmbient, noAmbientCss);
     root.classList.toggle('ytt-big-theater', !!S.bigTheater);
     root.classList.toggle('ytt-hide-fs-actions', !!S.hideFullscreenActions);

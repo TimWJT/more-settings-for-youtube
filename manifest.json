@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "More Settings for YouTube",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Copy YouTube transcripts in one click (button by Subscribe, Alt+Shift+T, popup), speed past 2x with Shift+. / Shift+,, block 0-9 seeking, Shift+/ fix, bigger theater mode and more.",
   "icons": {
     "48": "icon.svg",
