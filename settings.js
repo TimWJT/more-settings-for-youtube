@@ -1,6 +1,8 @@
 // Default settings, shared by content.js and popup.js.
 // page.js keeps its own copy of these defaults (it runs in the page and can't load this file).
 const YTT_DEFAULTS = {
+  // "On everywhere" button: false turns the whole add-on off
+  enabled: true,
   // Transcript
   transcriptButton: true,
   includeTimestamps: true,
@@ -23,8 +25,11 @@ const YTT_DEFAULTS = {
   resetTheater: true,
   hideFullscreenActions: true,
   hideWatermark: true,
+  hideInfoCards: true,
   fsNoScroll: true,
   fsHideMoreVideos: true,
+  hideEndVideos: false,
+  blockVKey: true,
   // Clean up: top bar
   hideCreate: true,
   hideNotifications: true,
@@ -39,6 +44,7 @@ const YTT_DEFAULTS = {
   hideGuidePlayables: true,
   hideGuideMemberships: true,
   hideGuideFooter: true,
+  openGuideExplore: true,
   // Clean up: feeds
   hideShortsFeed: false,
   hideShortsSearch: false,

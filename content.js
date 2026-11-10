@@ -7,7 +7,9 @@
   const emit = (name, detail) =>
     document.dispatchEvent(new CustomEvent('ytt:' + name, { detail: JSON.stringify(detail ?? null) }));
   const parse = (e) => { try { return JSON.parse(e.detail); } catch { return null; } };
-  const push = () => emit('settings', settings);
+  // "Off everywhere": page.js gets every switch turned off (the saved choices stay untouched).
+  const allOff = (s) => Object.fromEntries(Object.entries(s).map(([k, v]) => [k, typeof v === 'boolean' ? false : v]));
+  const push = () => emit('settings', settings.enabled === false ? allOff(settings) : settings);
 
   // Only send settings once the stored ones are loaded, so page.js never gets plain defaults.
   let loaded = false;

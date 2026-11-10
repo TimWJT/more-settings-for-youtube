@@ -1,0 +1,378 @@
+[
+ {
+  "variant": "off",
+  "watch_nav": {
+   "dcl": 1329.94,
+   "fcp": 1072.32,
+   "load": 1460.82
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 2.8565659523010254,
+  "watch": {
+   "frameMax": 621.1999999999998,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1320,
+   "framesOver50ms": 1,
+   "keydown3000Ms": 510.3799999700004,
+   "loaded": false,
+   "mousemove3000Ms": 101.95999999999913,
+   "style40Ms": 0.3599999999996726,
+   "styleLayout40Ms": 0.15999999999985448
+  },
+  "cpu_15s_playback": 11.84375,
+  "home_nav": {
+   "dcl": 2116.46,
+   "fcp": null,
+   "load": 2142.34
+  },
+  "home": {
+   "addTilesMs": 24.5600000000004,
+   "frameMax": 976.1999999999998,
+   "frameP50": 6.06000000000131,
+   "frameP95": 18.18000000000029,
+   "frames": 760,
+   "framesOver50ms": 6,
+   "keydown3000Ms": 444.5200000000005,
+   "loaded": false,
+   "mousemove3000Ms": 113.02000000000044,
+   "style40Ms": 0.3400000000001455,
+   "styleLayout40Ms": 0.27999999999974534
+  },
+  "cpu_10s_home_idle": 1.171875,
+  "spa_nav_ms": [
+   844.9599999999991,
+   1027.2799999999995,
+   1384.0199999999995
+  ]
+ },
+ {
+  "variant": "on",
+  "watch_nav": {
+   "dcl": 1060.2,
+   "fcp": 814.26,
+   "load": 1178.64
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 2.413721799850464,
+  "watch": {
+   "frameMax": 518.5999999999995,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1321,
+   "framesOver50ms": 1,
+   "keydown3000Ms": 427.0199999999995,
+   "loaded": true,
+   "mousemove3000Ms": 86.76000000000022,
+   "style40Ms": 0.38000000000010914,
+   "styleLayout40Ms": 0.19999997000013536
+  },
+  "cpu_15s_playback": 14.90625,
+  "home_nav": {
+   "dcl": 1859.68,
+   "fcp": null,
+   "load": 1919.58
+  },
+  "home": {
+   "addTilesMs": 40.98000000000047,
+   "frameMax": 945.42,
+   "frameP50": 12.11999999999898,
+   "frameP95": 30.320000000001528,
+   "frames": 462,
+   "framesOver50ms": 11,
+   "keydown3000Ms": 981.96,
+   "loaded": true,
+   "mousemove3000Ms": 215.80000000000015,
+   "style40Ms": 0.8999999999996362,
+   "styleLayout40Ms": 0.4799999699998807
+  },
+  "cpu_10s_home_idle": 0.515625,
+  "spa_nav_ms": [
+   1108.54,
+   963.7399999999998,
+   956.4399999999996
+  ]
+ },
+ {
+  "variant": "on",
+  "watch_nav": {
+   "dcl": 2005.16,
+   "fcp": 1221.7,
+   "load": 2319.62
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 2.719576835632324,
+  "watch": {
+   "frameMax": 1185.92,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1316,
+   "framesOver50ms": 1,
+   "keydown3000Ms": 981.4999999700004,
+   "loaded": true,
+   "mousemove3000Ms": 174.80000000000018,
+   "style40Ms": 0.7600000000002183,
+   "styleLayout40Ms": 0.4200000000000728
+  },
+  "cpu_15s_playback": 12.90625,
+  "home_nav": {
+   "dcl": 2247.22,
+   "fcp": null,
+   "load": 2289.06
+  },
+  "home": {
+   "addTilesMs": 38.53999999999997,
+   "frameMax": 703.0200000000004,
+   "frameP50": 12.11999999999898,
+   "frameP95": 30.299999999999272,
+   "frames": 501,
+   "framesOver50ms": 10,
+   "keydown3000Ms": 822.6600000000008,
+   "loaded": true,
+   "mousemove3000Ms": 206.77999999999977,
+   "style40Ms": 0.8800000000001091,
+   "styleLayout40Ms": 0.4600000000000364
+  },
+  "cpu_10s_home_idle": 0.765625,
+  "spa_nav_ms": [
+   1078.34,
+   1051.8999999999996,
+   715.7200000000003
+  ]
+ },
+ {
+  "variant": "off",
+  "watch_nav": {
+   "dcl": 1626.64,
+   "fcp": 1104.88,
+   "load": 1878.8
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 3.76153564453125,
+  "watch": {
+   "frameMax": 18.18000000000029,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1311,
+   "framesOver50ms": 0,
+   "keydown3000Ms": 909.1200000000008,
+   "loaded": false,
+   "mousemove3000Ms": 209.19999999999985,
+   "style40Ms": 0.5599999999994907,
+   "styleLayout40Ms": 0.47999999999956344
+  },
+  "cpu_15s_playback": 11.40625,
+  "home_nav": {
+   "dcl": 1583.82,
+   "fcp": null,
+   "load": 1610.12
+  },
+  "home": {
+   "addTilesMs": 40.35999999999967,
+   "frameMax": 1791.4199999999992,
+   "frameP50": 12.11999999999989,
+   "frameP95": 24.26000000000022,
+   "frames": 507,
+   "framesOver50ms": 9,
+   "keydown3000Ms": 888.1400000000003,
+   "loaded": false,
+   "mousemove3000Ms": 242.78000000000063,
+   "style40Ms": 0.5399999999999636,
+   "styleLayout40Ms": 0.1999999999998181
+  },
+  "cpu_10s_home_idle": 0.6875,
+  "spa_nav_ms": [
+   1454.46,
+   1991.5,
+   1125.2600000000002
+  ]
+ },
+ {
+  "variant": "off",
+  "watch_nav": {
+   "dcl": 1524.06,
+   "fcp": 1060.7,
+   "load": 1749.66
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 3.56117844581604,
+  "watch": {
+   "frameMax": 18.18000000000029,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1313,
+   "framesOver50ms": 0,
+   "keydown3000Ms": 775.3400000000001,
+   "loaded": false,
+   "mousemove3000Ms": 174.9399999999996,
+   "style40Ms": 0.4399999999995998,
+   "styleLayout40Ms": 0.3799999999991997
+  },
+  "cpu_15s_playback": 13.171875,
+  "home_nav": {
+   "dcl": 1994.2,
+   "fcp": 1176.12,
+   "load": 2029
+  },
+  "home": {
+   "addTilesMs": 42.26000000000022,
+   "frameMax": 763.6200000000008,
+   "frameP50": 12.1200000000008,
+   "frameP95": 36.36000000000058,
+   "frames": 402,
+   "framesOver50ms": 12,
+   "keydown3000Ms": 965.9800000000004,
+   "loaded": false,
+   "mousemove3000Ms": 213.6200000000008,
+   "style40Ms": 0.5200000000004366,
+   "styleLayout40Ms": 0.4799999699998807
+  },
+  "cpu_10s_home_idle": 1.265625,
+  "spa_nav_ms": [
+   1287.6799999999994,
+   998.2200000000004,
+   1830.5
+  ]
+ },
+ {
+  "variant": "on",
+  "watch_nav": {
+   "dcl": 1257.82,
+   "fcp": 1023.46,
+   "load": 1389.12
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 3.077407121658325,
+  "watch": {
+   "frameMax": 12.140000000001235,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1318,
+   "framesOver50ms": 0,
+   "keydown3000Ms": 499.15999999999985,
+   "loaded": true,
+   "mousemove3000Ms": 102.94000000000052,
+   "style40Ms": 0.3599999999996726,
+   "styleLayout40Ms": 0.2999999999992724
+  },
+  "cpu_15s_playback": 10.453125,
+  "home_nav": {
+   "dcl": 1657.2,
+   "fcp": null,
+   "load": 1681.98
+  },
+  "home": {
+   "addTilesMs": 18.659999999999854,
+   "frameMax": 936.46,
+   "frameP50": 6.059999999999491,
+   "frameP95": 12.139999999999418,
+   "frames": 879,
+   "framesOver50ms": 9,
+   "keydown3000Ms": 498.75999997000054,
+   "loaded": true,
+   "mousemove3000Ms": 114.07999999999991,
+   "style40Ms": 0.4000000000005457,
+   "styleLayout40Ms": 0.21999996999966245
+  },
+  "cpu_10s_home_idle": 1.5,
+  "spa_nav_ms": [
+   1037.7600000000002,
+   1325.6799999999994,
+   1466.34
+  ]
+ },
+ {
+  "variant": "on",
+  "watch_nav": {
+   "dcl": 1499.56,
+   "fcp": 950.26,
+   "load": 1783.6
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 3.5218803882598877,
+  "watch": {
+   "frameMax": 48.47999999999956,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1303,
+   "framesOver50ms": 0,
+   "keydown3000Ms": 1007,
+   "loaded": true,
+   "mousemove3000Ms": 217.13999999999945,
+   "style40Ms": 0.819999999999709,
+   "styleLayout40Ms": 0.6199999999998909
+  },
+  "cpu_15s_playback": 11.4375,
+  "home_nav": {
+   "dcl": 1872.36,
+   "fcp": null,
+   "load": 1897.06
+  },
+  "home": {
+   "addTilesMs": 37.11999999999989,
+   "frameMax": 775.7399999999998,
+   "frameP50": 6.0600000000004,
+   "frameP95": 18.18000000000029,
+   "frames": 839,
+   "framesOver50ms": 4,
+   "keydown3000Ms": 813.6800000000003,
+   "loaded": true,
+   "mousemove3000Ms": 147.22000000000023,
+   "style40Ms": 0.7599999999993088,
+   "styleLayout40Ms": 0.27999999999974534
+  },
+  "cpu_10s_home_idle": 0.5625,
+  "spa_nav_ms": [
+   1374.6000000000004,
+   1565.2400000000007,
+   669.1199999999999
+  ]
+ },
+ {
+  "variant": "off",
+  "watch_nav": {
+   "dcl": 1244.18,
+   "fcp": 986.26,
+   "load": 1381.18
+  },
+  "watch_playing": true,
+  "watch_to_playing_s": 2.6991827487945557,
+  "watch": {
+   "frameMax": 740.7400000000007,
+   "frameP50": 6.059999999999491,
+   "frameP95": 6.06000000000131,
+   "frames": 1320,
+   "framesOver50ms": 1,
+   "keydown3000Ms": 615.5799999999999,
+   "loaded": false,
+   "mousemove3000Ms": 117.89999999999964,
+   "style40Ms": 0.27999999999974534,
+   "styleLayout40Ms": 0.11999997000020812
+  },
+  "cpu_15s_playback": 13.8125,
+  "home_nav": {
+   "dcl": 1502.92,
+   "fcp": null,
+   "load": 1528.66
+  },
+  "home": {
+   "addTilesMs": 18.639999999999414,
+   "frameMax": 757.8799999999992,
+   "frameP50": 6.0600000000004,
+   "frameP95": 18.18000000000029,
+   "frames": 801,
+   "framesOver50ms": 6,
+   "keydown3000Ms": 365.19999997000014,
+   "loaded": false,
+   "mousemove3000Ms": 84.73999999999978,
+   "style40Ms": 0.27999999999974534,
+   "styleLayout40Ms": 0.13999997000064468
+  },
+  "cpu_10s_home_idle": 1.046875,
+  "spa_nav_ms": [
+   1865.2199999999991,
+   2386.62,
+   773.2799999999997
+  ]
+ }
+]

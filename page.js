@@ -6,13 +6,14 @@
   window.__yttLoaded = true;
 
   const S = {
+    enabled: true,
     maxSpeed: 2.5, speedStep: 0.25, speedOverlay: true, rememberSpeed: true, lastSpeed: 1, doublePressPast2: false, quietKeys: true,
-    blockNumberSeek: true, fixShortcutDialog: true, edgeHideControls: true, edgePauseIcon: false, fsNoScroll: true, fsHideMoreVideos: true,
+    blockNumberSeek: true, fixShortcutDialog: true, edgeHideControls: true, edgePauseIcon: false, fsNoScroll: true, fsHideMoreVideos: true, hideEndVideos: false, blockVKey: true,
     transcriptButton: true, includeTimestamps: true, includeHeader: true,
-    bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideWatermark: true, hideShortsFeed: false, hideShortsSearch: false,
+    bigTheater: true, resetTheater: true, hideFullscreenActions: true, hideWatermark: true, hideInfoCards: true, hideShortsFeed: false, hideShortsSearch: false,
     hideCreate: true, hideNotifications: true, hideVoiceSearch: true, noBlur: true, noAnimations: true, noAmbient: true,
     hideGuideShorts: true, hideGuideYourChannel: true, hideGuideYourVideos: true, hideGuideDownloads: true, hideGuideMore: true,
-    hideGuideReportHistory: true, hideGuidePlayables: true, hideGuideMemberships: true, hideGuideFooter: true,
+    hideGuideReportHistory: true, hideGuidePlayables: true, hideGuideMemberships: true, hideGuideFooter: true, openGuideExplore: true,
   };
 
   // Last-known settings, saved by this script, so everything applies before YouTube draws.
@@ -27,9 +28,16 @@
 
   // No animations: YouTube skips all its page/theater view transitions when the browser
   // doesn't offer them, so hide the feature before YouTube's code checks.
-  if (S.noAnimations) {
-    try { Object.defineProperty(Document.prototype, 'startViewTransition', { value: undefined, configurable: true, writable: true }); } catch { /* ignore */ }
+  // Kept so it can be put back without a reload when the setting (or the whole add-on) is turned off.
+  const viewTransition = Object.getOwnPropertyDescriptor(Document.prototype, 'startViewTransition');
+  function setAnimations(off) {
+    if (!viewTransition) return;
+    try {
+      if (off) Object.defineProperty(Document.prototype, 'startViewTransition', { value: undefined, configurable: true, writable: true });
+      else Object.defineProperty(Document.prototype, 'startViewTransition', viewTransition);
+    } catch { /* ignore */ }
   }
+  if (S.noAnimations) setAnimations(true);
 
   // ---------- helpers ----------
   const emit = (name, detail) =>
@@ -151,7 +159,9 @@ html.ytt-edge .html5-video-player .caption-window.ytp-caption-window-top{margin-
 /* Fullscreen: no page scrolling or scrollbar, and no "more videos" grid. */
 html.ytt-fs.ytt-fs-noscroll,html.ytt-fs.ytt-fs-noscroll body,html.ytt-fs.ytt-fs-noscroll ytd-app{
   overflow:hidden !important;scrollbar-width:none !important}
-html.ytt-fs-nomore .html5-video-player :is(.ytp-fullscreen-grid,.ytp-fullscreen-grid-expand-button,.ytp-fullscreen-grid-hover-overlay){
+/* The same grid holds the suggestions shown when a video ends (player gets .ended-mode), in any view. */
+html.ytt-fs-nomore .html5-video-player:not(.ended-mode) :is(.ytp-fullscreen-grid,.ytp-fullscreen-grid-expand-button,.ytp-fullscreen-grid-hover-overlay),
+html.ytt-end-hide .html5-video-player.ended-mode :is(.ytp-fullscreen-grid,.ytp-fullscreen-grid-expand-button,.ytp-fullscreen-grid-hover-overlay){
   display:none !important}
 
 /* Fullscreen: hide the like / dislike / comment / share / more column on the right. */
@@ -159,6 +169,9 @@ html.ytt-hide-fs-actions .ytp-fullscreen-quick-actions{display:none !important}
 
 /* Channel watermark: the logo in the video's bottom-right corner that turns into a Subscribe button. */
 html.ytt-hide-watermark .html5-video-player .iv-branding{display:none !important}
+
+/* Info cards: the (i) button at the top right of the video and its "More from..." teaser. */
+html.ytt-hide-cards .html5-video-player :is(.ytp-cards-button,.ytp-cards-teaser,.ytp-cards-teaser-box){display:none !important}
 
 /* Header buttons */
 html.ytt-hide-create ytd-masthead #buttons > ytd-button-renderer:has(button[aria-label="Create"]),
@@ -179,6 +192,11 @@ html.ytt-g-report ytd-guide-entry-renderer:has(> a#endpoint:is([title="Report hi
 html.ytt-g-playables ytd-guide-entry-renderer:has(> a#endpoint:is([title="Playables"],[href^="/playables"])),
 html.ytt-g-members ytd-guide-entry-renderer:has(> a#endpoint:is([title="Memberships"],[href^="/paid_memberships"])),
 html.ytt-g-footer ytd-guide-renderer #footer{display:none !important}
+
+/* Explore always open: show its hidden items and drop the Show more / Show less rows.
+   Only the Explore section (found by its Gaming / Podcasts links), not Subscriptions. */
+html.ytt-g-explore ytd-guide-section-renderer:has(a[href="/gaming"], a[href^="/podcasts"]) ytd-guide-collapsible-entry-renderer :is(#expanded, #expandable-items){display:block !important}
+html.ytt-g-explore ytd-guide-section-renderer:has(a[href="/gaming"], a[href^="/podcasts"]) ytd-guide-collapsible-entry-renderer :is(#expander-item, #collapser-item){display:none !important}
 
 /* Big theater: player fills the browser window under YouTube's header, video kept whole (letterboxed). */
 html.ytt-big-theater ytd-watch-flexy[theater] #full-bleed-container,
@@ -271,6 +289,20 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     else if (!on && optional[id]) { optional[id].remove(); delete optional[id]; }
   }
 
+  // Explore always open: the CSS shows the hidden rows, but YouTube may only build them once
+  // "Show more" is clicked, so click it (hidden) once if they aren't there yet. The sidebar
+  // can load late, so try a few times.
+  function openExplore(tries = 5) {
+    if (!S.openGuideExplore) return;
+    for (const sec of document.querySelectorAll('ytd-guide-section-renderer')) {
+      if (!sec.querySelector('a[href="/gaming"], a[href^="/podcasts"]')) continue;
+      const box = sec.querySelector('ytd-guide-collapsible-entry-renderer');
+      if (box && !box.hasAttribute('expanded')) box.querySelector('#expander-item #endpoint, #expander-item')?.click();
+      return;
+    }
+    if (tries > 0) setTimeout(() => openExplore(tries - 1), 1000);
+  }
+
   // ---------- settings ----------
   let lastBigTheater = null;
   // Declared here, before the settings listener, because emit('ready') below can fire it straight away.
@@ -286,6 +318,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     root.classList.toggle('ytt-big-theater', !!S.bigTheater);
     root.classList.toggle('ytt-hide-fs-actions', !!S.hideFullscreenActions);
     root.classList.toggle('ytt-hide-watermark', !!S.hideWatermark);
+    root.classList.toggle('ytt-hide-cards', !!S.hideInfoCards);
     root.classList.toggle('ytt-hide-create', !!S.hideCreate);
     root.classList.toggle('ytt-hide-notif', !!S.hideNotifications);
     root.classList.toggle('ytt-hide-voice', !!S.hideVoiceSearch);
@@ -298,9 +331,13 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     root.classList.toggle('ytt-g-playables', !!S.hideGuidePlayables);
     root.classList.toggle('ytt-g-members', !!S.hideGuideMemberships);
     root.classList.toggle('ytt-g-footer', !!S.hideGuideFooter);
+    root.classList.toggle('ytt-g-explore', !!S.openGuideExplore);
+    setAnimations(!!S.noAnimations);
+    openExplore();
     if (!S.edgeHideControls) setEdge(false);
     root.classList.toggle('ytt-fs-noscroll', !!S.fsNoScroll);
     root.classList.toggle('ytt-fs-nomore', !!S.fsHideMoreVideos);
+    root.classList.toggle('ytt-end-hide', !!S.hideEndVideos);
     updateFullscreen();
     if (lastBigTheater !== null && lastBigTheater !== S.bigTheater) nudgePlayerSize();
     lastBigTheater = !!S.bigTheater;
@@ -487,7 +524,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
 
     // Shift+. / Shift+,  -> speed up / down past YouTube's 2x cap.
     if (e.shiftKey && (e.code === 'Period' || e.code === 'Comma')) {
-      if (!getVideo()) return;
+      if (S.enabled === false || !getVideo()) return;
       stop(e);
       changeSpeed(e.code === 'Period' ? 1 : -1);
       return;
@@ -497,6 +534,12 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
 
     // 0-9 -> YouTube jumps to 0%-90% of the video. Block it.
     if (S.blockNumberSeek && !e.shiftKey && /^(Digit|Numpad)[0-9]$/.test(e.code)) {
+      stop(e);
+      return;
+    }
+
+    // V -> YouTube opens the grid of suggested videos over the player. Block it.
+    if (S.blockVKey && !e.shiftKey && e.code === 'KeyV' && location.pathname === '/watch') {
       stop(e);
       return;
     }
@@ -971,7 +1014,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
 
   // ---------- Alt+Shift+T (browser command, via background.js and content.js) ----------
   document.addEventListener('ytt:copy-now', () => {
-    if (videoId()) copyTranscript();
+    if (S.enabled !== false && videoId()) copyTranscript();
   });
 
   // ---------- requests from the popup (via content.js) ----------
@@ -992,7 +1035,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     ensureBar();
     theaterTick();
   }, 1000);
-  document.addEventListener('yt-navigate-finish', () => { setTimeout(() => { ensureBar(); theaterTick(); }, 300); });
+  document.addEventListener('yt-navigate-finish', () => { setTimeout(() => { ensureBar(); theaterTick(); openExplore(); }, 300); });
 
   // Apply cached settings right away; content.js sends the stored ones a moment later.
   applySettings();

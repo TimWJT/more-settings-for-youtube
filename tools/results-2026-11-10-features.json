@@ -1,0 +1,50 @@
+{
+ "channel_videos": {
+  "addon_off": {
+   "restyleMedMs": 13.38000000000102,
+   "tilesMedMs": 55.719999999999345
+  },
+  "defaults": {
+   "restyleMedMs": 12.579999999999927,
+   "tilesMedMs": 57.5
+  },
+  "defaults_plus_hide_shorts": {
+   "restyleMedMs": 12.279999999998836,
+   "tilesMedMs": 57.23999999999796
+  },
+  "elements": 4127,
+  "srcTiles": 12
+ },
+ "watch": {
+  "addon_off": {
+   "restyleMedMs": 16.660000000001673,
+   "tilesMedMs": 73.92000000000189
+  },
+  "defaults": {
+   "restyleMedMs": 16.780000000002474,
+   "tilesMedMs": 77.81999999999971
+  },
+  "defaults_plus_hide_shorts": {
+   "restyleMedMs": 15.5,
+   "tilesMedMs": 73.47999999999956
+  },
+  "elements": 4688,
+  "srcTiles": 12
+ },
+ "search": {
+  "addon_off": {
+   "restyleMedMs": 31.779999999998836,
+   "tilesMedMs": 753.0599999999977
+  },
+  "defaults": {
+   "restyleMedMs": 32,
+   "tilesMedMs": 698.7400000000052
+  },
+  "defaults_plus_hide_shorts": {
+   "restyleMedMs": 27.620000000009895,
+   "tilesMedMs": 666.6399999999994
+  },
+  "elements": 7753,
+  "srcTiles": 12
+ }
+}

@@ -22,13 +22,16 @@ Use your normal profile (signed in to YouTube). Keep DevTools console open for e
 - [ ] Mute or change volume with M / ↑ ↓, then open a video in a new tab: it keeps that mute and volume.
 - [ ] Typing C/M/digits in search or a comment box types normally.
 - [ ] 0–9 don't seek. Shift+/ opens and closes the shortcut list.
+- [ ] V does nothing on a video (normal and fullscreen). Block V off: V opens the suggested videos grid again.
 - [ ] Mouse at the far right edge (left edge does nothing), in fullscreen and normal view: Space, ←/→, C, M work with no bar, title, middle icon or seek arrows, and captions don't move. Small labels still show for speed, volume and captions. Pausing shows nothing (no title, no icon). Pause badge switch on: small ❚❚ bottom-left while paused, gone when playing. Move the mouse back over the video and the controls come back. Switch off: old behaviour.
 
 ## Player
 - [ ] Theater fills the window, no cropping; Reset each video: next video starts normal, no flash.
 - [ ] Channel logo (Subscribe watermark) in the video's bottom-right corner is gone; comes back when switched off.
+- [ ] The (i) info button at the top right of the video (and its "More from..." pop-out) is gone; comes back when switched off.
 - [ ] Fullscreen side buttons hidden.
 - [ ] Fullscreen: wheel/touchpad does nothing, no scrollbar, no more-videos grid. ⚙ quality menu still scrolls. Exit fullscreen: page scrolls normally.
+- [ ] Let a video finish (autoplay off), in normal view and fullscreen: the suggested videos show. Hide videos at the end on: nothing shows.
 
 ## Clean up / Speed-ups
 - [ ] Create, bell, mic hidden; sidebar items hidden (full and mini sidebar), including Playables, Memberships, Report history and the About/Terms/© links at the bottom.

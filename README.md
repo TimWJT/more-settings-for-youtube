@@ -16,12 +16,15 @@ A Firefox extension that adds the settings YouTube doesn't give you. Install it 
 | Remember speed between videos | on |
 | **C** (captions), **↑ ↓** (volume) and **M** (mute) don't pop up the progress bar; a small label shows the change | on |
 | **Block 0–9** from jumping through the video | on |
+| **Block V** from opening the suggested videos grid over the player | on |
 | **Shift+/** closes the shortcut list if it's already open | on |
 | Mouse parked at the far right edge (or just past it): Space, arrows and other keys still work but only the small speed, volume and captions labels show (no control bar, title, paused title, play/pause icon or seek arrows, and captions stay put) | on |
 | Mouse at the edge: small ❚❚ badge in the player's bottom-left corner while paused | off |
 | Hide the channel logo in the video's bottom-right corner (the one that shows Subscribe) | on |
+| Hide the (i) info button at the top right of the video and its "More from..." pop-out | on |
 | Fullscreen: no scrolling and no scrollbar | on |
-| Fullscreen: remove the "more videos" grid you get by scrolling down | on |
+| Fullscreen: remove the "more videos" grid you get by scrolling down (the suggestions when a video ends still show) | on |
+| Hide the suggested videos when a video ends | off |
 | **Bigger theater mode**: video fills the browser window under YouTube's header, aspect kept, Firefox toolbar visible | on |
 | New videos start in normal view (theater resets) | on |
 | Hide the like / dislike / comment / share / more buttons in fullscreen | on |
@@ -30,6 +33,7 @@ A Firefox extension that adds the settings YouTube doesn't give you. Install it 
 | No ambient glow behind the video | on |
 | Hide Shorts in feeds (home, subscriptions, channels, up next) | off |
 | Hide Shorts in search | off |
+| Sidebar: keep Explore open (no Show more / Show less) | on |
 | Hide the Create button and notifications bell | on |
 | Sidebar: hide Shorts tab, Your channel, Your videos, Downloads, More from YouTube, Playables, Memberships, Report history, the About/Terms links at the bottom (each its own switch) | on |
 | Turn off voice search (mic button and the feature) | on |

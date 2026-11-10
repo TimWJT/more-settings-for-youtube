@@ -30,6 +30,7 @@ const TABS = [
         switches: [
           ['quietKeys', 'Quiet C and volume', 'C, ↑ ↓ and M don\'t pop up the progress bar'],
           ['blockNumberSeek', 'Block 0–9', 'Number keys don\'t jump through the video'],
+          ['blockVKey', 'Block V', 'V doesn\'t open the suggested videos grid'],
           ['fixShortcutDialog', 'Shift+/ toggles', 'Press again to close the shortcut list'],
           ['edgeHideControls', 'Mouse at the edge hides controls', 'Mouse at the far right: only small labels show'],
           ['edgePauseIcon', 'Pause badge at the edge', 'Small ❚❚ in the corner while paused'],
@@ -46,6 +47,8 @@ const TABS = [
           ['bigTheater', 'Bigger theater', 'Video fills the window, nothing cut off'],
           ['resetTheater', 'Reset each video', 'New videos start in normal view'],
           ['hideWatermark', 'Hide channel logo', 'The Subscribe logo in the video\'s corner'],
+          ['hideInfoCards', 'Hide info button', 'The (i) at the top right: "More from..."'],
+          ['hideEndVideos', 'Hide videos at the end', 'The suggestions when a video finishes'],
         ],
       },
       {
@@ -53,8 +56,7 @@ const TABS = [
         switches: [
           ['hideFullscreenActions', 'Hide side buttons', 'Like, dislike, comment, share, more'],
           ['fsNoScroll', 'No scrolling', 'No scrollbar, and the page below stays put'],
-          ['fsHideMoreVideos', 'No more videos', 'Removes the video grid you get by scrolling down'],
-        ],
+          ['fsHideMoreVideos', 'No more videos', 'Removes the video grid you get by scrolling down'],        ],
       },
     ],
   },
@@ -70,6 +72,13 @@ const TABS = [
         ],
       },
       {
+        title: 'Shorts',
+        switches: [
+          ['hideShortsFeed', 'Hide in feeds', 'Home, subscriptions, channels, up next'],
+          ['hideShortsSearch', 'Hide in search', 'Search results'],
+        ],
+      },
+      {
         title: 'Sidebar',
         switches: [
           ['hideGuideShorts', 'Shorts tab', ''],
@@ -77,17 +86,11 @@ const TABS = [
           ['hideGuideYourVideos', 'Your videos', ''],
           ['hideGuideDownloads', 'Downloads', ''],
           ['hideGuideMore', 'More from YouTube', 'The whole section'],
+          ['openGuideExplore', 'Keep Explore open', 'All of it shows, no Show more / Show less'],
           ['hideGuidePlayables', 'Playables', 'In Explore'],
           ['hideGuideMemberships', 'Memberships', 'In Explore'],
           ['hideGuideReportHistory', 'Report history', ''],
           ['hideGuideFooter', 'Links at the bottom', 'About, Press, Terms, © Google'],
-        ],
-      },
-      {
-        title: 'Shorts',
-        switches: [
-          ['hideShortsFeed', 'Hide in feeds', 'Home, subscriptions, channels, up next'],
-          ['hideShortsSearch', 'Hide in search', 'Search results'],
         ],
       },
     ],
@@ -99,7 +102,7 @@ const TABS = [
         title: 'Lighter drawing',
         switches: [
           ['noBlur', 'No blur', 'Solid top bar, menus and player buttons'],
-          ['noAnimations', 'No animations', 'Theater and page changes are instant', true],
+          ['noAnimations', 'No animations', 'Theater and page changes are instant'],
         ],
       },
       {
@@ -260,7 +263,43 @@ function render() {
   selectTab(TABS.some((t) => t.id === start) ? start : TABS[0].id);
 }
 
+// ---------- "On everywhere" button ----------
+async function setupPower() {
+  const startOn = current.enabled !== false;
+  let onYouTube = false;
+  try {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    onYouTube = /^https?:\/\/www\.youtube\.com\//.test(tab?.url || '');
+  } catch { /* ignore */ }
+  const show = (on) => {
+    $('power').setAttribute('aria-checked', String(on));
+    $('power').title = on ? 'Turn the add-on off' : 'Turn the add-on on';
+    document.body.classList.toggle('off', !on);
+    $('rest').inert = !on;
+    // Everything switches on/off straight away except "No voice search", which is set when the page
+    // loads, so offer a reload only when that one is in use.
+    const changed = on !== startOn && onYouTube && !!current.hideVoiceSearch;
+    $('off-msg').textContent = on
+      ? (changed ? 'Back on. Reload to finish turning it on.' : '')
+      : 'Off. Nothing is changed on YouTube.' + (changed ? ' Reload to finish turning it off.' : '');
+    $('off-reload').hidden = !changed;
+    $('off-bar').hidden = !$('off-msg').textContent;
+  };
+  show(startOn);
+  $('power').addEventListener('click', () => {
+    current.enabled = current.enabled === false;
+    show(current.enabled);
+    save({ enabled: current.enabled });
+  });
+  $('off-reload').addEventListener('click', async () => {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) await browser.tabs.reload(tab.id);
+    window.close();
+  });
+}
+
 browser.storage.local.get(YTT_DEFAULTS).then((s) => {
   current = s;
   render();
+  setupPower();
 });
