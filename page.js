@@ -17,7 +17,10 @@
   };
 
   // Last-known settings, saved by this script, so everything applies before YouTube draws.
-  try { Object.assign(S, JSON.parse(localStorage.getItem('ytp-settings') || '{}')); } catch { /* ignore */ }
+  // Only known keys of the right type are taken, so this cache is just an early hint (the stored settings follow).
+  const knownOnly = (o) => Object.fromEntries(Object.entries(o && typeof o === 'object' ? o : {})
+    .filter(([k, v]) => k in S && typeof v === typeof S[k]));
+  try { Object.assign(S, knownOnly(JSON.parse(localStorage.getItem('ytp-settings') || '{}'))); } catch { /* ignore */ }
 
   // Voice search: remove the browser speech APIs before YouTube's code checks for them.
   if (S.hideVoiceSearch) {
@@ -148,7 +151,7 @@ html[dark] #ytt-bar{--ytt-bg:rgba(255,255,255,.1);--ytt-bg-hover:rgba(255,255,25
    (YouTube's volume % and this add-on's label), since those are what you want to see. */
 html.ytt-edge .html5-video-player :is(.ytp-chrome-bottom,.ytp-chrome-top,.ytp-gradient-bottom,.ytp-gradient-top,
   .ytp-bezel,.ytp-unified-seek-wrapper,.ytp-doubletap-ui-legacy,.ytp-fullscreen-metadata,.ytp-title-expanded-overlay){
-  opacity:0 !important;transition:none !important;animation:none !important}
+  opacity:0 !important;visibility:hidden !important;transition:none !important;animation:none !important}
 .ytt-pause-badge{display:none;position:absolute;left:12px;bottom:12px;z-index:70;padding:4px 7px;border-radius:6px;
   background:rgba(0,0,0,.55);color:#fff;font:700 11px/1 Roboto,Arial,sans-serif;letter-spacing:-1px;pointer-events:none}
 html.ytt-edge .ytt-pause-badge.on{display:block}
@@ -180,13 +183,13 @@ html.ytt-hide-notif ytd-masthead ytd-notification-topbar-button-renderer{display
 html.ytt-hide-voice ytd-masthead #voice-search-button{display:none !important}
 
 /* Sidebar: Shorts tab, Your channel, Your videos, Downloads, and the whole "More from YouTube" section.
-   Matches links by title/address (English titles) - plain attribute selectors, cheap for the browser. */
-html.ytt-g-shorts ytd-guide-entry-renderer:has(> a#endpoint[title="Shorts"]),
-html.ytt-g-shorts ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+   Matches links by address or icon where YouTube has one (works in any language), else by English title. */
+html.ytt-g-shorts ytd-guide-entry-renderer:is([ytt-icon^="TAB_SHORTS"],:has(> a#endpoint[title="Shorts"])),
+html.ytt-g-shorts ytd-mini-guide-entry-renderer:is([aria-label="Shorts"],:has(> a[href="/shorts/"])),
 html.ytt-g-channel ytd-guide-entry-renderer:has(> a#endpoint[title="Your channel"]),
 html.ytt-g-videos ytd-guide-entry-renderer:has(> a#endpoint:is([title="Your videos"],[href^="https://studio.youtube.com/channel/"])),
 html.ytt-g-downloads ytd-guide-entry-renderer:has(> a#endpoint:is([title="Downloads"],[href="/feed/downloads"])),
-html.ytt-g-downloads ytd-mini-guide-entry-renderer[aria-label="Downloads"],
+html.ytt-g-downloads ytd-mini-guide-entry-renderer:is([aria-label="Downloads"],:has(> a[href="/feed/downloads"])),
 html.ytt-g-more #sections > ytd-guide-section-renderer:has(> #items a[href*="music.youtube.com"], > #items a[href*="youtubekids.com"]),
 html.ytt-g-report ytd-guide-entry-renderer:has(> a#endpoint:is([title="Report history"],[href^="/reporthistory"])),
 html.ytt-g-playables ytd-guide-entry-renderer:has(> a#endpoint:is([title="Playables"],[href^="/playables"])),
@@ -346,10 +349,10 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
   }
   document.addEventListener('ytt:settings', (e) => {
     try {
-      const incoming = JSON.parse(e.detail);
+      const incoming = knownOnly(JSON.parse(e.detail));
       if (saveTimer) delete incoming.lastSpeed; // a newer speed is waiting to be saved
       Object.assign(S, incoming);
-      localStorage.setItem('ytp-settings', e.detail);
+      localStorage.setItem('ytp-settings', JSON.stringify(knownOnly(S)));
     } catch { /* ignore */ }
     applySettings();
   });
@@ -533,7 +536,8 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     if (quietKey(e)) return;
 
     // 0-9 -> YouTube jumps to 0%-90% of the video. Block it.
-    if (S.blockNumberSeek && !e.shiftKey && /^(Digit|Numpad)[0-9]$/.test(e.code)) {
+    if (S.blockNumberSeek && !e.shiftKey && /^(Digit|Numpad)[0-9]$/.test(e.code) &&
+        (location.pathname === '/watch' || document.querySelector('ytd-app[miniplayer-is-active]'))) {
       stop(e);
       return;
     }
@@ -712,15 +716,16 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
   // If YouTube says the video has no transcript, stop there (no point trying the panel).
   async function viaInnertube(id) {
     let lastErr;
+    let noEndpoint = 0;
     for (const anon of [false, true]) {
       let next;
       try { next = await innertube('next', { videoId: id }, anon); } catch (err) { lastErr = err; continue; }
       const ep = findAll(next.engagementPanels || [], 'getTranscriptEndpoint')[0] ||
         findAll(next, 'getTranscriptEndpoint')[0];
       if (!ep?.params) {
-        const err = new Error('this video has no transcript');
-        err.final = true;
-        throw err;
+        noEndpoint++;
+        lastErr = new Error('this video has no transcript');
+        continue;
       }
       try {
         const data = await innertube('get_transcript', { params: ep.params }, anon);
@@ -731,7 +736,22 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
         lastErr = new Error('empty transcript');
       } catch (err) { lastErr = err; }
     }
+    // Only give up on every other method when both answers had no transcript AND the player lists no captions.
+    if (noEndpoint === 2) {
+      const pr = document.getElementById('movie_player')?.getPlayerResponse?.();
+      const tracks = pr?.videoDetails?.videoId === id ? pr.captions?.playerCaptionsTracklistRenderer?.captionTracks : null;
+      if (pr?.videoDetails?.videoId === id && !tracks?.length) lastErr.final = true;
+    }
     throw lastErr;
+  }
+
+  // Caption files must come from YouTube itself.
+  function youtubeUrl(u) {
+    const url = new URL(u, location.origin);
+    if (url.protocol !== 'https:' || url.hostname !== 'www.youtube.com' || url.pathname !== '/api/timedtext') {
+      throw new Error('caption link is not on youtube.com');
+    }
+    return url;
   }
 
   // Method 2a: reuse a caption file the player already downloaded for this video (e.g. after CC was on).
@@ -742,7 +762,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
       .filter((u) => u.includes('/api/timedtext') && u.includes(`v=${id}`))
       .pop();
     if (!entry) throw new Error('no caption download yet');
-    const url = new URL(entry);
+    const url = youtubeUrl(entry);
     url.searchParams.set('fmt', 'json3');
     url.searchParams.delete('tlang');
     const r = await fetch(url, { credentials: 'same-origin' });
@@ -771,7 +791,9 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     const manual = tracks.filter((t) => t.kind !== 'asr');
     const track = manual.find((t) => t.languageCode?.startsWith(lang)) || manual[0] ||
       tracks.find((t) => t.languageCode?.startsWith(lang)) || tracks[0];
-    const r = await fetch(track.baseUrl + '&fmt=json3', { credentials: 'same-origin' });
+    const capUrl = youtubeUrl(track.baseUrl);
+    capUrl.searchParams.set('fmt', 'json3');
+    const r = await fetch(capUrl, { credentials: 'same-origin' });
     const raw = await r.text();
     if (!raw) throw new Error('caption file empty');
     const j = JSON.parse(raw);
@@ -993,6 +1015,7 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
   function buildBar() {
     const btn = el('button', {
       type: 'button', class: 'ytt-btn', title: 'Copy the transcript (Shift-click: the other timestamp setting)',
+      'aria-description': 'Copies the transcript. Shift-click uses the other timestamp setting.',
       onclick: (e) => copyTranscript(e.shiftKey ? !S.includeTimestamps : S.includeTimestamps),
     }, svgIcon(ICON_COPY), 'Transcript');
     return el('div', { id: 'ytt-bar' }, btn);
@@ -1028,10 +1051,20 @@ html[dark] ytd-menu-popup-renderer,html[dark] ytd-multi-page-menu-renderer{backg
     }
   });
 
+  // Sidebar rows have no address for Shorts, and their titles are translated, so tag each row with
+  // YouTube's own icon name (the same in every language) for the hide rules above. Only new rows are looked at.
+  function tagGuide() {
+    for (const row of document.querySelectorAll('ytd-guide-entry-renderer:not([ytt-icon])')) {
+      const icon = row.data?.icon?.iconType;
+      if (icon) row.setAttribute('ytt-icon', icon);
+    }
+  }
+
   // ---------- page loop ----------
   // A few cheap lookups once a second; nothing runs while the bar is already in place.
   setInterval(() => {
     if (document.hidden) return;
+    tagGuide();
     ensureBar();
     theaterTick();
   }, 1000);

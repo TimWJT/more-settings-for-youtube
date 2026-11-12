@@ -20,6 +20,20 @@
     if (loaded) push();
   });
 
+  // Any script on youtube.com can fire the ytt: events below, and a script-made event looks the same
+  // whether page.js or someone else sent it. So the clipboard and storage are only touched shortly after
+  // something this script saw itself: a real click on our Transcript button, the keyboard shortcut or the
+  // popup asking, or (for the remembered speed) a real key, click or wheel turn.
+  let copyAllowedUntil = 0;
+  let userActedAt = 0;
+  const allowCopy = () => { copyAllowedUntil = Date.now() + 30000; };
+  document.addEventListener('click', (e) => {
+    if (e.isTrusted && e.target instanceof Element && e.target.closest('#ytt-bar .ytt-btn')) allowCopy();
+  }, true);
+  for (const type of ['keydown', 'click', 'wheel', 'pointerup']) {
+    window.addEventListener(type, (e) => { if (e.isTrusted) userActedAt = Date.now(); }, { capture: true, passive: true });
+  }
+
   // page.js loaded after us: send settings again.
   document.addEventListener('ytt:ready', () => { if (loaded) push(); });
 
@@ -27,6 +41,7 @@
   document.addEventListener('ytt:save', (e) => {
     const d = parse(e);
     const v = Number(d?.lastSpeed);
+    if (Date.now() - userActedAt > 5000) return; // speed only changes after you press a key or click
     if (v >= 0.0625 && v <= 16) browser.storage.local.set({ lastSpeed: v });
   });
 
@@ -34,6 +49,8 @@
   document.addEventListener('ytt:copy', async (e) => {
     const d = parse(e);
     if (!d || typeof d.text !== 'string' || d.text.length > 5_000_000) return;
+    if (Date.now() > copyAllowedUntil) { emit('copy-result', { id: d.id, ok: false }); return; }
+    copyAllowedUntil = 0; // one copy per click or shortcut
     let ok = false;
     try { await navigator.clipboard.writeText(d.text); ok = true; } catch {
       const ta = document.createElement('textarea');
@@ -48,18 +65,18 @@
   });
 
   // Popup asks for the transcript of this tab.
-  let seq = 0;
   const pending = new Map();
   document.addEventListener('ytt:get-transcript-result', (e) => {
     const d = parse(e);
     const done = d && pending.get(d.id);
+    if (done && (typeof d.text !== 'string' || d.text.length > 5_000_000) && d.ok) return;
     if (done) { pending.delete(d.id); done(d); }
   });
   browser.runtime.onMessage.addListener((msg) => {
-    if (msg?.type === 'copyNow') { emit('copy-now'); return undefined; }
+    if (msg?.type === 'copyNow') { allowCopy(); emit('copy-now'); return undefined; }
     if (msg?.type !== 'getTranscript') return undefined;
     return new Promise((resolve) => {
-      const id = 'c' + ++seq;
+      const id = 'c' + crypto.randomUUID(); // not guessable, so another script can't answer in advance
       pending.set(id, resolve);
       emit('get-transcript', { id, timestamps: !!msg.timestamps });
       setTimeout(() => {
