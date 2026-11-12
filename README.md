@@ -1,68 +1,55 @@
 # More Settings for YouTube
 
-(The popup is titled "YouTube Settings".)
+A Firefox add-on that adds the settings YouTube doesn't give you: one-click transcript copy, speeds past 2×, keyboard fixes, a bigger theater mode and less clutter.
 
-A Firefox extension that adds the settings YouTube doesn't give you. Install it from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/more-settings-for-youtube/) (Firefox 128+).
+**[Install from Firefox Add-ons](https://addons.mozilla.org/firefox/addon/more-settings-for-youtube/)** (Firefox 128 or later)
+
+![Transcript button next to Subscribe](screenshots/1-transcript.png)
+
+![Playback settings in the popup](screenshots/2-playback.png)
+
+![Clean-up settings in the popup](screenshots/3-cleanup.png)
 
 ## Features
 
-| Feature | Default |
+Every feature is a switch in the toolbar popup (titled "YouTube Settings"). Turn on only what you want.
+
+- **Copy any transcript**: a Transcript button next to Subscribe copies it with timestamps. Shift-click copies it without. You can also copy from the popup or with Alt+Shift+T.
+- **Speed past 2×**, up to your own maximum (default 2.5×, up to 16×), with an on-screen speed label. Speed is remembered between videos.
+- **Keyboard fixes**: number keys no longer jump through the video, V no longer opens the suggested videos grid, and C, arrow keys and M no longer pop up the progress bar.
+- **Bigger theater mode** that fills the browser window under YouTube's header.
+- **Hide clutter**: Shorts, end-of-video suggestions, the channel logo on the video, the Create button, the notifications bell, voice search and sidebar items (each its own switch).
+- **Lighter YouTube**: no see-through blur, no animations and no ambient glow behind the video.
+- **Calm fullscreen**: no scrolling, no "more videos" grid and no like/share buttons.
+
+## Keyboard shortcuts
+
+| Keys | What it does |
 |---|---|
-| **Transcript** button next to Subscribe: one click copies it (with timestamps), a small "Transcript copied" message confirms. Shift-click copies without timestamps | on |
-| Copy from the toolbar popup, or **Alt+Shift+T** (change in about:addons → ⚙ → Manage Extension Shortcuts) | – |
-| **Shift+. / Shift+,** change speed past 2× up to your max (default 2.5×, up to 16×), step 0.05–0.5× | on |
-| Past 2×, each speed-up needs a quick double press of Shift+. | off |
-| On-screen speed indicator | on |
-| Remember speed between videos | on |
-| **C** (captions), **↑ ↓** (volume) and **M** (mute) don't pop up the progress bar; a small label shows the change | on |
-| **Block 0–9** from jumping through the video | on |
-| **Block V** from opening the suggested videos grid over the player | on |
-| **Shift+/** closes the shortcut list if it's already open | on |
-| Mouse parked at the far right edge (or just past it): Space, arrows and other keys still work but only the small speed, volume and captions labels show (no control bar, title, paused title, play/pause icon or seek arrows, and captions stay put) | on |
-| Mouse at the edge: small ❚❚ badge in the player's bottom-left corner while paused | off |
-| Hide the channel logo in the video's bottom-right corner (the one that shows Subscribe) | on |
-| Hide the (i) info button at the top right of the video and its "More from..." pop-out | on |
-| Fullscreen: no scrolling and no scrollbar | on |
-| Fullscreen: remove the "more videos" grid you get by scrolling down (the suggestions when a video ends still show) | on |
-| Hide the suggested videos when a video ends | off |
-| **Bigger theater mode**: video fills the browser window under YouTube's header, aspect kept, Firefox toolbar visible | on |
-| New videos start in normal view (theater resets) | on |
-| Hide the like / dislike / comment / share / more buttons in fullscreen | on |
-| No see-through blur: solid top bar, home page chip bar, menus and player buttons instead of frosted glass (cheaper to draw) | on |
-| No animations: theater mode and page changes happen instantly | on |
-| No ambient glow behind the video | on |
-| Hide Shorts in feeds (home, subscriptions, channels, up next) | off |
-| Hide Shorts in search | off |
-| Sidebar: keep Explore open (no Show more / Show less) | on |
-| Hide the Create button and notifications bell | on |
-| Sidebar: hide Shorts tab, Your channel, Your videos, Downloads, More from YouTube, Playables, Memberships, Report history, the About/Terms links at the bottom (each its own switch) | on |
-| Turn off voice search (mic button and the feature) | on |
+| Alt+Shift+T | Copy the transcript (change it in about:addons > gear menu > Manage Extension Shortcuts) |
+| Shift+. / Shift+, | Speed up / slow down, past 2× |
+| Shift+/ | Opens YouTube's shortcut list, and now also closes it |
 
-Transcript is fetched three ways, falling back in order: YouTube's internal transcript API → the player's caption file → YouTube's own transcript panel, opened off-screen so you never see it. The browser console (F12) logs which one worked: `[More Settings for YouTube] transcript via ...`.
+## Privacy
 
-Performance: nothing runs while you scroll or watch except one keyboard listener and a once-a-second check that does a couple of lookups. Transcript requests only happen when you click.
+- Collects no data. Settings are stored in Firefox on your own computer.
+- Only runs on www.youtube.com.
+- The only network requests go to youtube.com, when you copy a transcript, to fetch that video's transcript.
 
-## Run from source
+## Report a problem
 
-1. Go to `about:debugging#/runtime/this-firefox`
-2. **Load Temporary Add-on…** and pick `manifest.json` in this folder. It's removed when Firefox restarts.
-3. Reload any open YouTube tabs.
+Open an issue on the [Issues page](https://github.com/TimWJT/more-settings-for-youtube/issues). Say what you expected, what happened, and your Firefox version.
 
-Build the upload zip with `npx web-ext build --overwrite-dest --ignore-files "*.md" screenshots`.
+## For developers
 
-## Files
+- Run from source: open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and pick `manifest.json`. Reload any open YouTube tabs.
+- Build the upload zip: `npx web-ext build --overwrite-dest --ignore-files "*.md" screenshots`
+- Files: `page.js` runs in YouTube's page (keys, speed, theater, transcript, button). `background.js` handles Alt+Shift+T. `content.js` bridges settings storage, clipboard and the popup. `settings.js` holds the defaults (`page.js` has its own copy; keep them in sync).
+- The transcript is fetched three ways, falling back in order: YouTube's transcript API, the player's caption file, then YouTube's own transcript panel opened off-screen. The browser console (F12) logs which one worked.
+- Design notes are in [NOTES.md](NOTES.md) and test steps in [TESTING.md](TESTING.md).
 
-- `page.js` – runs in YouTube's page (keys, speed, theater, transcript, button)
-- `background.js` – Alt+Shift+T shortcut
-- `content.js` – bridge: settings storage, clipboard fallback, popup messages
-- `settings.js` – defaults (page.js has its own copy; keep them in sync)
-- `popup.*` – toolbar popup with transcript copy and all settings
+## Licence
 
-## Ideas for later
+All Rights Reserved. The source is public so it can be read and reviewed. See [LICENSE](LICENSE).
 
-From a survey of popular enhancer extensions (Enhancer for YouTube, Improve YouTube):
-force default quality / codec, frame screenshot hotkey, caption styling, A-B loop, disable autoplay / hide end-screen cards.
-
-## License
-
-All rights reserved. See [LICENSE](LICENSE).
+Not affiliated with YouTube or Google.
